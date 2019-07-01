@@ -1,0 +1,20 @@
+{
+  "key": "yapi-plugin",
+  "name": "yapi-plugin-import-swagger-customize",
+  "version": "1.0",
+  "description": "yapi自定义导入插件",
+  "main": "index.js",
+  "keywords": [
+    "yapi",
+    "swagger",
+    "plugin",
+    "import"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/follow-my-heart/yapi-plugin-import-swagger-customize.git"
+  },
+  "scripts": {
+    "dev": "node index.js"
+  }
+}
