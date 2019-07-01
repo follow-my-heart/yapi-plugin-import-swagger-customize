@@ -19,3 +19,5 @@ yapi plugin --name yapi-plugin-import-swagger-customize
     "name": "import-swagger-customize"
 }]
 ```
+### 效果图
+![render](https://user-images.githubusercontent.com/20868829/60428823-56c8b900-9c2c-11e9-8b7d-951f2e24e022.jpeg)
