@@ -1,7 +1,7 @@
 {
   "key": "yapi-plugin",
   "name": "yapi-plugin-import-swagger-customize",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "yapi自定义导入插件",
   "main": "index.js",
   "keywords": [

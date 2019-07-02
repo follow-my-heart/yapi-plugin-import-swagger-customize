@@ -111,7 +111,7 @@ export default class ProjectInterfaceSync extends Component {
   };
 
   render() {
-    const { importType, interfaceList } = this.state
+    const { importType, inputType, interfaceList } = this.state
     return (
       <div className="appiont-swagger-data">
         <div className="card">
@@ -144,10 +144,12 @@ export default class ProjectInterfaceSync extends Component {
             /> 
           ) : (
             <div>
-              <RadioGroup onChange={this.inputTypeChange} value={inputType}>
-                <Radio value="select">选择接口名称</Radio>
-                <Radio value="input">输入接口名称</Radio>
-              </RadioGroup>
+              <div className="input-radio">
+                <RadioGroup onChange={this.inputTypeChange} value={inputType}>
+                  <Radio value="select">选择接口名称</Radio>
+                  <Radio value="input">输入接口名称</Radio>
+                </RadioGroup>
+              </div>
               {inputType === 'select' ? (
                 <Select
                 className="select"
@@ -156,9 +158,9 @@ export default class ProjectInterfaceSync extends Component {
                 placeholder="/api/interface/add"
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-              >
-                {interfaceList.map((item, key) => <Option key={key} value={item}>{item}</Option>)}
-              </Select>
+                >
+                  {interfaceList.map((item, key) => <Option key={key} value={item}>{item}</Option>)}
+                </Select>
               ) : (
                 <Input
                   placeholder="/api/interface/add"
