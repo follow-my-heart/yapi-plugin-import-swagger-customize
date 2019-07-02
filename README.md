@@ -9,7 +9,13 @@ yapi自定义导入swagger数据
 
 ### 安装插件
 
-> 安装yapi
+> 安装ykit（已经装过的请忽略）
+
+```shell
+npm install -g ykit
+```
+
+> 安装yapi（已经装过的请忽略）
 
 ```shell
 npm install -g yapi-cli --registry https://registry.npm.taobao.org
