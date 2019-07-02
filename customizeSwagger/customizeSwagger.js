@@ -27,7 +27,9 @@ export default class ProjectInterfaceSync extends Component {
       // 项目的swagger json地址
       swaggerUrl: '',
       // 新增或更新接口arr
-      interfaceName: []
+      interfaceName: [],
+      // 更新接口接口名输入形式
+      inputType: 'select'
     };
   }
    
@@ -57,6 +59,12 @@ export default class ProjectInterfaceSync extends Component {
   importTypeChange = e => {
     this.setState({
       importType: e.target.value
+    });
+  };
+
+  inputTypeChange = e => {
+    this.setState({
+      inputType: e.target.value
     });
   };
 
@@ -121,8 +129,9 @@ export default class ProjectInterfaceSync extends Component {
             <Tooltip
               title={
                 <div>
-                  <p>1、添加多个新接口时请用,隔开</p>
+                  <p>1、添加多个接口时请用,隔开</p>
                   <p>2、接口名称必须和后端定义的一致</p>
+                  <p>3、项目接口过多时，更新接口请选择直接输入接口名称</p>
                 </div>
               }
             >
@@ -134,16 +143,29 @@ export default class ProjectInterfaceSync extends Component {
               onChange={this.interfaceNameInput}
             /> 
           ) : (
-            <Select
-              className="select"
-              mode="multiple"
-              onChange={this.interfaceSelect}
-              placeholder="/api/interface/add"
-              optionFilterProp="children"
-              filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-            >
-              {interfaceList.map((item, key) => <Option key={key} value={item}>{item}</Option>)}
-            </Select>
+            <div>
+              <RadioGroup onChange={this.inputTypeChange} value={inputType}>
+                <Radio value="select">选择接口名称</Radio>
+                <Radio value="input">输入接口名称</Radio>
+              </RadioGroup>
+              {inputType === 'select' ? (
+                <Select
+                className="select"
+                mode="multiple"
+                onChange={this.interfaceSelect}
+                placeholder="/api/interface/add"
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              >
+                {interfaceList.map((item, key) => <Option key={key} value={item}>{item}</Option>)}
+              </Select>
+              ) : (
+                <Input
+                  placeholder="/api/interface/add"
+                  onChange={this.interfaceNameInput}
+                /> 
+              )}
+            </div>
           )}
           <Button className="button" type="primary" onClick={this.importData}>导入</Button>
         </div>
