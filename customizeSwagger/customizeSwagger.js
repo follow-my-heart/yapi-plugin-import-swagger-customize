@@ -26,10 +26,13 @@ export default class ProjectInterfaceSync extends Component {
       importType: 'add',
       // 项目的swagger json地址
       swaggerUrl: '',
+      // 是否已有url
+      hasUrl: false,
       // 新增或更新接口arr
       interfaceName: [],
       // 更新接口接口名输入形式
-      inputType: 'select'
+      inputType: 'select',
+      _id: null
     };
   }
    
@@ -41,10 +44,56 @@ export default class ProjectInterfaceSync extends Component {
   };
 
   componentDidMount() {
+    this.getSwaggerUrl();
+  }
+  // 获取是否存在swaggerUrl
+  getSwaggerUrl = () => {
+    const params = {
+      projectId: this.props.projectId
+    }
+    axios.post('/api/plugin/customizeSwagger/getSwaggerUrl', params).then(res => {
+      const { errcode, data, errmsg } = res.data
+      if (errcode === 0) {
+        if (data) {
+          const { swaggerUrl, _id } = data
+          this.setState({
+            swaggerUrl,
+            hasUrl: true,
+            _id
+          })
+        }
+      } else {
+        message.error(errmsg);
+      }
+    });
+  }
+  // 保存swaggerUrl
+  saveSwaggerUrl = () => {
+    const { swaggerUrl, _id } = this.state
+    const params = {
+      projectId: this.props.projectId,
+      swaggerUrl,
+      _id
+    }
+    axios.post('/api/plugin/customizeSwagger/saveSwaggerUrl', params).then(res => {
+      const { errcode, errmsg } = res.data
+      if (errcode === 0) {
+        message.success(errmsg);
+        this.setState({
+          hasUrl: true
+        })
+      } else {
+        message.error(errmsg);
+      }
+    });
+  }
+  // 获取项目所有接口list
+  getInterfaceList = () => {
     axios.get(`/api/interface/list_menu?project_id=${this.props.projectId}`).then(res => {
-      if (res.data.errcode === 0) {
+      const { errcode, data, errmsg } = res.data
+      if (errcode === 0) {
         let interfaceList = [];
-        res.data.data.forEach(controller => {
+        data.forEach(controller => {
           controller.list.forEach(item => {
             interfaceList.push(item.path)
           })
@@ -52,14 +101,24 @@ export default class ProjectInterfaceSync extends Component {
         this.setState({
           interfaceList
         });
+      } else {
+        message.error(errmsg);
       }
     });
   }
 
-  importTypeChange = e => {
+  changeSwaggerUrl = () => {
     this.setState({
-      importType: e.target.value
+      hasUrl: false,
+      swaggerUrl: ''
     });
+  }
+  importTypeChange = e => {
+    const importType = e.target.value;
+    this.setState({
+      importType
+    });
+    importType === 'update' && this.state.interfaceList.length === 0 && this.getInterfaceList();
   };
 
   inputTypeChange = e => {
@@ -102,30 +161,40 @@ export default class ProjectInterfaceSync extends Component {
       swaggerUrl
     }
     await axios.post('/api/plugin/customizeSwagger/updateData', params).then(res => {
-      if (res.data.errcode === 0) {
-        message.success(res.data.errmsg);
+      const { errcode, errmsg } = res.data
+      if (errcode === 0) {
+        message.success(errmsg);
       } else {
-        message.error(res.data.errmsg);
+        message.error(errmsg);
       }
     });
   };
 
   render() {
-    const { importType, inputType, interfaceList } = this.state
+    const { importType, inputType, interfaceList, swaggerUrl, hasUrl } = this.state
     return (
       <div className="appiont-swagger-data">
         <div className="card">
-          <h3>swagger接口自定义导入</h3>
           <RadioGroup onChange={this.importTypeChange} value={importType}>
             <Radio value="add">添加接口</Radio>
             <Radio value="update">更新接口</Radio>
           </RadioGroup>
-          <div className="label">项目的swaggerUrl:</div>
-          <Input
-            placeholder="http://demo.swagger.io/v2/swagger.json"
-            onChange={this.swaggerUrlInput}
-          />
-          <div className="label">接口名称&nbsp;
+          <div className="import-label">项目的swaggerUrl:</div>
+          {hasUrl ? (
+            <div className="swagger-url">
+              {swaggerUrl}
+              <Button className="url-button" type="primary" onClick={this.changeSwaggerUrl}>修改</Button>
+            </div>
+          ) : (
+            <div className="swagger-url">
+              <Input
+                placeholder="http://demo.swagger.io/v2/swagger.json"
+                onChange={this.swaggerUrlInput}
+              />
+              <Button className="url-button" type="primary" onClick={this.saveSwaggerUrl}>保存</Button>
+            </div>
+          )}
+          <div className="import-label">接口名称&nbsp;
             <Tooltip
               title={
                 <div>
@@ -152,7 +221,7 @@ export default class ProjectInterfaceSync extends Component {
               </div>
               {inputType === 'select' ? (
                 <Select
-                className="select"
+                className="import-select"
                 mode="multiple"
                 onChange={this.interfaceSelect}
                 placeholder="/api/interface/add"
@@ -169,7 +238,7 @@ export default class ProjectInterfaceSync extends Component {
               )}
             </div>
           )}
-          <Button className="button" type="primary" onClick={this.importData}>导入</Button>
+          <Button className="import-button" type="primary" onClick={this.importData}>导入</Button>
         </div>
       </div>
     );

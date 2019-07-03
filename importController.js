@@ -1,8 +1,9 @@
 const baseController = require('controllers/base.js');
 const yapi = require('yapi.js');
 const projectModel = require('models/project.js');
-const HanldeImportData = require('../../common/HandleImportData');
 const tokenModel = require('models/token.js');
+const swaggerUrlModel = require('./swaggerUrlModel');
+const HanldeImportData = require('../../common/HandleImportData');
 const sha = require('sha.js');
 const { getToken } = require('utils/token');
 const formatData = require('./run');
@@ -13,7 +14,37 @@ class importController extends baseController {
     super(ctx);
     this.projectModel = yapi.getInst(projectModel);
     this.tokenModel = yapi.getInst(tokenModel);
+    this.swaggerUrlModel = yapi.getInst(swaggerUrlModel);
   }
+
+  // 查询swaggerURL
+  async getSwaggerUrl (ctx) {
+    const requestBody = ctx.request.body;
+    const { projectId } = requestBody;
+    if (!projectId) {
+      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id'));
+    }
+    const result = await this.swaggerUrlModel.getByProjectId(projectId);
+    return (ctx.body = yapi.commons.resReturn(result, 0));
+  }
+
+  // 保存swaggerUrl
+  async saveSwaggerUrl (ctx) {
+    const requestBody = ctx.request.body;
+    const { projectId } = requestBody;
+    if (!projectId) {
+      return (ctx.body = yapi.commons.resReturn(null, 408, '缺少项目Id'));
+    }
+    let result;
+    if (requestBody._id) {
+      result = await this.swaggerUrlModel.up(requestBody);
+    } else {
+      result = await this.swaggerUrlModel.save(requestBody);
+    }
+    return (ctx.body = yapi.commons.resReturn(result, 0));
+  }
+
+  // 新增、修改接口
   async updateData (ctx) {
 
     let successMessage;
@@ -32,6 +63,7 @@ class importController extends baseController {
     if (swaggerData.errorMsg) {
       return (ctx.body = yapi.commons.resReturn(null, 404, swaggerData.errorMsg));
     }
+
     // 格式化swagger数据
     const res = await formatData(
       swaggerData,
@@ -40,7 +72,6 @@ class importController extends baseController {
         errorMessage.push(err);
       }
     );
-
     await HanldeImportData(
       res,
       projectId,
@@ -65,7 +96,7 @@ class importController extends baseController {
     ctx.body = yapi.commons.resReturn(null, 0, successMessage);
 
   }
-
+  // 获取项目token
   async getProjectToken(project_id, uid) {
     try {
         let data = await this.tokenModel.get(project_id);
@@ -89,7 +120,7 @@ class importController extends baseController {
         return "";
     }
   }
-  
+  // 获取swaggerJSON
   async getSwaggerData(swaggerUrl) {
     try {
       const response = await axios.get(swaggerUrl);
