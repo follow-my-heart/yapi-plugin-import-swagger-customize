@@ -89,13 +89,15 @@ export default class ProjectInterfaceSync extends Component {
   }
   // 获取项目所有接口list
   getInterfaceList = () => {
+    const {  projectMsg = {} } = this.props 
+    const { basepath = '' } = projectMsg
     axios.get(`/api/interface/list_menu?project_id=${this.props.projectId}`).then(res => {
       const { errcode, data, errmsg } = res.data
       if (errcode === 0) {
         let interfaceList = [];
         data.forEach(controller => {
           controller.list.forEach(item => {
-            interfaceList.push(item.path)
+            interfaceList.push(`${basepath}${item.path}`)
           })
         });
         this.setState({
@@ -148,7 +150,7 @@ export default class ProjectInterfaceSync extends Component {
 
   importData = async () => {
     const { importType, swaggerUrl, interfaceName } = this.state
-    const { projectId, projectMsg } = this.props 
+    const { projectId, projectMsg = {} } = this.props 
 
     if (!swaggerUrl) {
       return message.error('swagger url 不能为空!');
