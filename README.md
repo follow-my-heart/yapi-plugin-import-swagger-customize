@@ -39,7 +39,7 @@ yapi plugin --name yapi-plugin-import-swagger-customize
 ]
 ```
 ### 新增接口
-![add](https://user-images.githubusercontent.com/20868829/60580697-1c8c2280-9db8-11e9-93fb-b281e32421ae.png)
+![add](https://user-images.githubusercontent.com/20868829/61109083-9ad27e00-a4b6-11e9-9805-5e6a977bc0ff.png)
 
 ### 更新接口
-![update](https://user-images.githubusercontent.com/20868829/60580712-22820380-9db8-11e9-8b30-32717ce11c99.png)
+![update](https://user-images.githubusercontent.com/20868829/61109045-7e364600-a4b6-11e9-9a89-dfe52e6716be.png)
