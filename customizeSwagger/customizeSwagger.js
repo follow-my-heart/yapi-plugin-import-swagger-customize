@@ -97,7 +97,13 @@ export default class ProjectInterfaceSync extends Component {
         let interfaceList = [];
         data.forEach(controller => {
           controller.list.forEach(item => {
-            interfaceList.push(`${basepath}${item.path}`)
+            let path = item.path
+            // 处理baseUrl
+            if (basepath) {
+              path = item.path.indexOf(basepath) === 0 ? item.path.substr(basepath.length) : path;
+              path = `${basepath}${path}`
+            }
+            interfaceList.push(path)
           })
         });
         this.setState({
