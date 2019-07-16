@@ -56,7 +56,7 @@ class importController extends baseController {
     }
     // 获取项目信息
     const projectData = await this.projectModel.get(projectId);
-    const { basePath, uid } = projectData;
+    const { basepath, uid } = projectData;
     // 获取swaggerJSON
     const swaggerData = await this.getSwaggerData(swaggerUrl, ctx);
 
@@ -77,7 +77,7 @@ class importController extends baseController {
       projectId,
       '',
       cat,
-      basePath,
+      basepath,
       importType === 'add' ? 'normal' : 'merge',
       err => {
         errorMessage.push(err);
